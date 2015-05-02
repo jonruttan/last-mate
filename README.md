@@ -1,4 +1,4 @@
-# First Mate [![Build Status](https://travis-ci.org/jonruttan/last-mate.svg?branch=master)](https://travis-ci.org/jonruttan/last-mate)
+# Last Mate [![Build Status](https://travis-ci.org/jonruttan/last-mate.svg?branch=master)](https://travis-ci.org/jonruttan/last-mate)
 
 A rendering engine for tokens generated with TextMate-style grammars; [atom/first-mate](https://github.com/atom/first-mate)'s missing counterpart.
 
