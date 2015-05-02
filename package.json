@@ -1,0 +1,46 @@
+{
+  "name": "last-mate",
+  "version": "0.1.0",
+  "description": "Rendering engine for tokens generated with TextMate-style grammars",
+  "main": "./lib/last-mate.js",
+  "scripts": {
+    "test": "grunt test",
+    "prepublish": "grunt prepublish",
+    "benchmark": "node_modules/.bin/coffee --nodejs --harmony_collections benchmark/benchmark.coffee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonruttan/last-mate"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/jonruttan/last-mate/raw/master/LICENSE.md"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/jonruttan/last-mate/issues"
+  },
+  "homepage": "http://jonruttan.github.io/last-mate",
+  "dependencies": {
+    "emissary": "^1",
+    "event-kit": "^1.0.0",
+    "fs-plus": "^2",
+    "grim": "^1.2.1",
+    "season": "^5.0.2",
+    "underscore-plus": "^1"
+  },
+  "devDependencies": {
+    "jasmine-focused": "^1",
+    "grunt-contrib-coffee": "~0.9.0",
+    "grunt-cli": "~0.1.8",
+    "grunt": "~0.4.1",
+    "grunt-shell": "~0.2.2",
+    "grunt-coffeelint": "0.0.6",
+    "rimraf": "~2.1.4",
+    "coffee-script": "~1.7.0",
+    "grunt-peg": "~1.1.0",
+    "grunt-atomdoc": "^1.0.0",
+    "textlex": "~0.4"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "fileTypes": [
+    "html",
+    "htm",
+    "shtml",
+    "xhtml",
+    "inc",
+    "tmpl",
+    "tpl"
+  ],
+  "tags": {
+    "body": {
+      "open": "<pre class=\"editor editor-colors\">",
+      "close": "</pre>"
+    },
+    "line": {
+      "open": "<div class=\"line\">",
+      "close": "</div>"
+    },
+    "scope": {
+      "open": "<span class=\"\\0\">",
+      "close": "</span>",
+      "escape": [
+        {
+          "pattern": "\\.+",
+          "replace": " "
+        }
+      ]
+    },
+    "value": {
+      "open": "<span>",
+      "close": "</span>"
+    },
+    "entities": {
+      "escape": [
+        {
+          "pattern": "&",
+          "replace": "&amp;"
+        },
+        {
+          "pattern": "\"",
+          "replace": "&quot;"
+        },
+        {
+          "pattern": "'",
+          "replace": "&#39;"
+        },
+        {
+          "pattern": "<",
+          "replace": "&lt;"
+        },
+        {
+          "pattern": ">",
+          "replace": "&gt;"
+        },
+        {
+          "pattern": " ",
+          "replace": "&nbsp;"
+        }
+      ]
+    }
+  },
+  "keyEquivalent": "^~H",
+  "name": "HTML",
+  "scopeName": "text.html.basic"
+}

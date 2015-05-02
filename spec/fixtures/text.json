@@ -1,0 +1,13 @@
+{
+  "fileTypes": [
+    "txt"
+  ],
+  "keyEquivalent": "^~P",
+  "name": "Plain Text",
+  "scopeName": "text.plain",
+  "tags": {
+    "line": {
+      "close": "\n"
+    }
+  }
+}
