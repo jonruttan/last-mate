@@ -57,9 +57,10 @@ class Renderer
   # Public: Render all lines in the given line token array.
   #
   # * `lineTokens` An {Array} of token arrays for each line.
+  # * `tagStack` A {TagStack} object for holding the state of the renderer.
   #
-  # Returns a {String} rendering of the line token array in the given markup
-  # format.
+  # Returns a {String} representation of the line token array rendered with the
+  # *`body`* tag rules defined in this object's markup format.
   renderLines: (lineTokens, tagStack=new TagStack()) ->
     outputArray = []
     outputArray.push tagStack.push 'body', @tags?.body
@@ -68,15 +69,13 @@ class Renderer
     outputArray.push tagStack.pop()
     outputArray.join ''
 
-  # Public: Render the line tokens.
+  # Public: Render a line token array.
   #
   # * `tokens` An {Array} of tokens to render.
+  # * `tagStack` A {TagStack} object for holding the state of the renderer.
   #
-  # Returns an {Object} containing the following properties:
-  # * `token` An {Array} of tokens covering the entire line of text.
-  # * `ruleStack` An {Array} of rules representing the tokenized state at the
-  #   end of the line. These should be passed back into this method when
-  #   tokenizing the next line in the file.
+  # Returns a {String} representation of the token array rendered with the
+  # *`line`* tag rules defined in this object's markup format.
   renderLine: (tokens, tagStack=new TagStack()) ->
     outputArray = []
     outputArray.push tagStack.push 'line', @tags?.line
@@ -87,9 +86,12 @@ class Renderer
   # Public: Render a token array.
   #
   # * `tokens` An {Array} of tokens to render.
+  # * `tagStack` A {TagStack} object for holding the state of the renderer. This
+  #              will be drained, rendering all closing tags on the stack,
+  #              before the function exits.
   #
-  # Returns a {String} representation of the scope using the selected
-  # renderer.
+  # Returns a {String} representation of the token array rendered with the
+  # *`scope`* tag rules defined in this object's markup format.
   renderTokens: (tokens, tagStack=new TagStack()) ->
     outputArray = []
     for token in tokens
@@ -104,9 +106,10 @@ class Renderer
   # Public: Render a token value.
   #
   # * `value` A {String} value.
+  # * `tagStack` A {TagStack} object for holding the state of the renderer.
   #
-  # Returns a {String} representation of the value using the selected
-  # renderer.
+  # Returns a {String} representation of the token value rendered with the
+  # *`value`* tag rules defined in this object's markup format.
   renderValue: (value, tagStack=new TagStack()) ->
     outputArray = []
     # value = ' ' unless value
