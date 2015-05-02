@@ -1,6 +1,8 @@
 # Last Mate [![Build Status](https://travis-ci.org/jonruttan/last-mate.svg?branch=master)](https://travis-ci.org/jonruttan/last-mate)
 
-A rendering engine for tokens generated with TextMate-style grammars; [atom/first-mate](https://github.com/atom/first-mate)'s missing counterpart.
+A rendering engine for tokens generated with TextMate-style grammars. Last Mate
+is the rendering counterpart to [atom/first-mate](https://github.com/atom/first-mate)'s
+lexer.
 
 ## Installing
 
@@ -15,10 +17,57 @@ npm install last-mate
 ```coffeescript
 {RendererRegistry} = require 'last-mate'
 registry = new RendererRegistry()
-renderer = registry.loadRendererSync('./spec/fixtures/javascript.json')
-{tokens} = renderer.tokenizeLine('var offset = 3;')
-for {value, scopes} in tokens
-  console.log("Token text: '#{value}' with scopes: #{scopes}")
+renderer = registry.loadRendererSync('./spec/fixtures/html.json')
+html = renderer.renderLines([
+  [
+    {
+      "value": "var",
+      "scopes": [
+        "source.js",
+        "storage.modifier.js"
+      ]
+    },
+    {
+      "value": " offset ",
+      "scopes": [
+        "source.js"
+      ]
+    },
+    {
+      "value": "=",
+      "scopes": [
+        "source.js",
+        "keyword.operator.js"
+      ]
+    },
+    {
+      "value": " ",
+      "scopes": [
+        "source.js"
+      ]
+    },
+    {
+      "value": "3",
+      "scopes": [
+        "source.js",
+        "constant.numeric.js"
+      ]
+    },
+    {
+      "value": ";",
+      "scopes": [
+        "source.js",
+        "punctuation.terminator.statement.js"
+      ]
+    }
+  ]
+])
+console.log(html)
+```
+
+Outputs
+```html
+<pre class="editor editor-colors"><div class="line"><span class="source js"><span class="storage modifier js"><span>var</span></span><span>&nbsp;offset&nbsp;</span><span class="keyword operator js"><span>=</span></span><span>&nbsp;</span><span class="constant numeric js"><span>3</span></span><span class="punctuation terminator statement js"><span>;</span></span></span></div></pre>
 ```
 
 #### loadRenderer(rendererPath, callback)
@@ -40,31 +89,49 @@ Returns a `Renderer` instance.
 
 ### Renderer
 
-#### renderLine(line, [ruleStack], [firstLine])
+#### renderLines(lineTokens, tagStack=new TagStack())
 
-Generate the tokenize for the given line of text.
+Render all lines in the given line token array.
 
-`line` - The string text of the line.
+`lineTokens` - An array of token arrays for each line.
+`tagStack` - A TagStack object for holding the state of the renderer.
 
-`ruleStack` - An array of Rule objects that was returned from a previous call
+`tagStack` - An array of Rule objects that was returned from a previous call
 to this method.
 
-`firstLine` - `true` to indicate that the very first line is being tokenized.
+Returns a string representation of the line token array rendered with the
+*`body`* tag rules defined in this object's markup format.
 
-Returns an object with a `tokens` key pointing to an array of token objects
-and a `ruleStack` key pointing to an array of rules to pass to this method
-on future calls for lines proceeding the line that was just tokenized.
+#### renderLine(tokens, tagStack=new TagStack())
 
-#### tokenizeLines(text)
+`tokens` - An array of tokens to render.
+`tagStack` - A TagStack object for holding the state of the renderer.
 
-`text` - The string text possibly containing newlines.
+Returns a string representation of the token array rendered with the *`line`*
+tag rules defined in this object's markup format.
 
-Returns an array of tokens for each line tokenized.
+#### renderTokens(tokens, tagStack=new TagStack())
+
+`tokens` - An array of tokens to render.
+`tagStack` - A TagStack object for holding the state of the renderer. This
+             stack will be drained, rendering all closing tags on it, before the
+             function exits.
+
+Returns a string representation of the token array rendered with the
+*`scope`* tag rules defined in this object's markup format.
+
+#### renderValue(value, tagStack=new TagStack())
+
+`tokens` - An array of tokens to render.
+`tagStack` - A TagStack object for holding the state of the renderer.
+
+Returns a string representation of the token value rendered with the
+*`value`* tag rules defined in this object's markup format.
 
 ## Developing
 
   * Clone the repository
   * Run `npm install`
   * Run `npm test` to run the specs
-  * Run `npm run benchmark` to benchmark fully tokenizing jQuery 2.0.3 and
+  * Run `npm run benchmark` to benchmark fully rendering jQuery 2.0.3 and
     the CSS for Twitter Bootstrap 3.1.1
