@@ -1,7 +1,7 @@
 # Last Mate [![Build Status](https://travis-ci.org/jonruttan/last-mate.svg?branch=master)](https://travis-ci.org/jonruttan/last-mate)
 
 A rendering engine for tokens generated with TextMate-style grammars. Last Mate
-is the rendering counterpart to [atom/first-mate](https://github.com/atom/first-mate)'s
+is the missing counterpart to [atom/first-mate](https://github.com/atom/first-mate)'s
 lexer.
 
 ## Installing
