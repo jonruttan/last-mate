@@ -188,17 +188,15 @@ class RendererRegistry
     @rendererOverridesByPath = {}
     undefined
 
-  # Public: Select a renderer for the given file path and file contents.
+  # Public: Select a renderer for the given file path.
   #
-  # This picks the best match by checking the file path and contents against
-  # each renderer.
+  # This picks the best match by checking the file path against each renderer.
   #
   # * `filePath` A {String} file path.
-  # * `fileContents` A {String} of text for the file path.
   #
   # Returns a {Renderer}, never null.
-  selectRenderer: (filePath, fileContents) ->
-    _.max @renderers, (renderer) -> renderer.getScore(filePath, fileContents)
+  selectRenderer: (filePath) ->
+    _.max @renderers, (renderer) -> renderer.getScore(filePath)
 
   createToken: (value, scopes) -> {value, scopes}
 

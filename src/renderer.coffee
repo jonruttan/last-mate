@@ -134,32 +134,11 @@ class Renderer
     @emitter.emit 'did-update'
     true
 
-  getScore: (filePath, contents) ->
-    contents = fs.readFileSync(filePath, 'utf8') if not contents? and fs.isFileSync(filePath)
-
+  getScore: (filePath) ->
     if @registry.rendererOverrideForPath(filePath) is @scopeName
       2 + (filePath?.length ? 0)
-    else if @matchesContents(contents)
-      1 + (filePath?.length ? 0)
     else
       @getPathScore(filePath)
-
-  matchesContents: (contents) ->
-    return false unless contents? and @firstLineRegex?
-
-    escaped = false
-    numberOfNewlinesInRegex = 0
-    for character in @firstLineRegex.source
-      switch character
-        when '\\'
-          escaped = !escaped
-        when 'n'
-          numberOfNewlinesInRegex++ if escaped
-          escaped = false
-        else
-          escaped = false
-    lines = contents.split('\n')
-    @firstLineRegex.testSync(lines[0..numberOfNewlinesInRegex].join('\n'))
 
   getPathScore: (filePath) ->
     return -1 unless filePath
