@@ -1,6 +1,6 @@
 {
   "name": "last-mate",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Rendering engine for tokens generated with TextMate-style grammars",
   "main": "./lib/last-mate.js",
   "scripts": {
