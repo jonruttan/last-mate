@@ -5,3 +5,6 @@ lib/
 api.json
 benchmark/cache/
 tmp/
+
+# Sublime Text editor files
+*.sublime-*
