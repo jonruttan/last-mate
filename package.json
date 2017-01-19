@@ -12,12 +12,7 @@
     "type": "git",
     "url": "https://github.com/jonruttan/last-mate"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://github.com/jonruttan/last-mate/raw/master/LICENSE.md"
-    }
-  ],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/jonruttan/last-mate/issues"
   },
