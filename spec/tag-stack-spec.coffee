@@ -56,9 +56,18 @@ describe "TagStack operations", ->
 
     it "returns an escaped opening tag with an injected scope when provided", ->
       stack = new TagStack()
-      tag = stack.push('1.2', {open: 'open(\\0)', escape: [{pattern: '\\.', replace: ' '}]})
+      tag = stack.push('1.2', {open: 'open1(\\0)', escape: [{pattern: '\\.', replace: ' '}]})
       expect(stack.array.length).toBe 1
-      expect(tag).toBe 'open(1 2)'
+      expect(tag).toBe 'open1(1 2)'
+      tag = stack.push('2-3', {open: 'open2(\\1)', escape: [{pattern: '-', replace: ' '}]})
+      expect(stack.array.length).toBe 2
+      expect(tag).toBe 'open2(1 2)'
+      tag = stack.push('3 4', {open: 'open3(\\1)'})
+      expect(stack.array.length).toBe 3
+      expect(tag).toBe 'open3(2 3)'
+      tag = stack.push('4 5', {open: 'open4(\\4)'})
+      expect(stack.array.length).toBe 4
+      expect(tag).toBe 'open4()'
 
   describe "::pop(scope)", ->
     it "pops a scope off the stack", ->
@@ -91,10 +100,22 @@ describe "TagStack operations", ->
 
     it "returns an escaped closing tag when provided", ->
       stack = new TagStack()
-      stack.push('1.2', {close: 'close(\\0)', escape: [{pattern: '\\.', replace: ' '}]})
+      stack.push('1.2', {close: 'close1(\\0)', escape: [{pattern: '\\.', replace: ' '}]})
+      stack.push('2-3', {close: 'close2(\\1)', escape: [{pattern: '-', replace: ' '}]})
+      stack.push('3 4', {close: 'close3(\\1)'})
+      stack.push('4 5', {close: 'close4(\\4)'})
+      tag = stack.pop()
+      expect(stack.array.length).toBe 3
+      expect(tag).toBe 'close4()'
+      tag = stack.pop()
+      expect(stack.array.length).toBe 2
+      expect(tag).toBe 'close3(2 3)'
+      tag = stack.pop()
+      expect(stack.array.length).toBe 1
+      expect(tag).toBe 'close2(1 2)'
       tag = stack.pop()
       expect(stack.array.length).toBe 0
-      expect(tag).toBe 'close(1 2)'
+      expect(tag).toBe 'close1(1 2)'
 
   describe "::sync(current, desired)", ->
     xit 'pops excess frames off of the stack', ->

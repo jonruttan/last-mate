@@ -34,6 +34,21 @@ class TagStack
   length: ->
     @array.length
 
+  # Public: Replaces all instances of an escaped back-reference *(i.e. \0) with
+  # the referenced tag's scope.
+  #
+  # * `string` A {String} containing back-references.
+  #
+  # Returns a {String} with the back-referenced scopes.
+  replaceBackReferences: (string) ->
+    # We're trying to keep the syntax the same as the *first-mate* RegExp,
+    # rather than using `$&` for the insertion.
+    string.replace /\\(\d+)/g, (match, offset) =>
+      return '' if offset >= @array.length
+      frame = Object.create @array[@array.length - 1 - offset]
+      frame.scope = replace(frame.scope, frame.tag.escape) if frame.tag.escape?
+      frame.scope
+
   # Public: Push a scope {String} onto a scope array.
   #
   # * `scope` A {String} containing the scope name.
@@ -41,21 +56,24 @@ class TagStack
   #
   # Returns a {String} with an opening scope tag.
   push: (scope, tag={}) ->
-    @array.push({scope: scope, tag: tag})
-    scope = replace(scope, tag.escape) if tag.escape?
-    # We're trying to keep the syntax the same as the *first-mate* RegExp,
-    # rather than using `$&` for the insertion, as would be the case with the
-    # following:
-    #     if tag.open? then scope.replace(/.*/, tag.open) else ''
-    if tag.open? then tag.open.replace(/\\0/, scope) else ''
+    @array.push scope: scope, tag: tag
+
+    return '' if not tag.open?
+
+    @replaceBackReferences tag.open
 
   # Public: Pop a scope off of a scope array.
   #
   # Returns a {String} with an closing scope tag.
   pop: ->
+    frame = @array[@array.length - 1]
+    scope = ''
+
+    scope = @replaceBackReferences frame.tag.close if frame.tag?.close?
+
     return '' if not frame = @array.pop()
-    frame.scope = replace(frame.scope, frame.tag.escape) if frame.tag?.escape?
-    if frame.tag?.close? then frame.tag.close.replace(/\\0/, frame.scope) else ''
+
+    scope
 
   # Public: Return the tags required to synchronize the internal scope state to
   # with a desired scope.
