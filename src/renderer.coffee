@@ -26,6 +26,15 @@ class Renderer
     @fileTypes ?= []
     @includedRendererScopes = []
 
+  # Public: Create a TagStack for this Renderer.
+  #
+  # * `array` An optional scope {Array} to pass to the constructor.
+  # * `tag` An optional tag {Object} to pass to the constructor.
+  #
+  # Returns a {TagStack} object.
+  createTagStack: (array, tag) ->
+    new TagStack {@translations}, array, tag
+
   ###
   Section: Event Subscription
   ###
@@ -50,11 +59,11 @@ class Renderer
   #
   # Returns a {String} representation of the line token array rendered with the
   # *`body`* tag rules defined in this object's markup format.
-  renderLines: (lineTokens, tagStack=new TagStack()) ->
+  renderLines: (lineTokens, tagStack=@createTagStack()) ->
     outputArray = []
     outputArray.push tagStack.push 'body', @tags?.body
     for tokens in lineTokens
-      outputArray.push @renderLine(tokens, tagStack)
+      outputArray.push @renderLine tokens, tagStack
     outputArray.push tagStack.pop()
     outputArray.join ''
 
@@ -65,10 +74,10 @@ class Renderer
   #
   # Returns a {String} representation of the token array rendered with the
   # *`line`* tag rules defined in this object's markup format.
-  renderLine: (tokens, tagStack=new TagStack()) ->
+  renderLine: (tokens, tagStack=@createTagStack()) ->
     outputArray = []
     outputArray.push tagStack.push 'line', @tags?.line
-    outputArray.push @renderTokens(tokens, new TagStack())
+    outputArray.push @renderTokens tokens, @createTagStack()
     outputArray.push tagStack.pop()
     outputArray.join ''
 
@@ -81,10 +90,10 @@ class Renderer
   #
   # Returns a {String} representation of the token array rendered with the
   # *`scope`* tag rules defined in this object's markup format.
-  renderTokens: (tokens, tagStack=new TagStack()) ->
+  renderTokens: (tokens, tagStack=@createTagStack()) ->
     outputArray = []
     for token in tokens
-      outputArray.push tagStack.sync(new TagStack(token.scopes, @tags?.scope or true))
+      outputArray.push tagStack.sync @createTagStack(token.scopes, @tags?.scope or true)
       outputArray.push @renderValue token.value, tagStack
 
     while tagStack.length() > 0
@@ -99,7 +108,7 @@ class Renderer
   #
   # Returns a {String} representation of the token value rendered with the
   # *`value`* tag rules defined in this object's markup format.
-  renderValue: (value, tagStack=new TagStack()) ->
+  renderValue: (value, tagStack=@createTagStack()) ->
     outputArray = []
     # value = ' ' unless value
     value = regexen.replaceAll value, tags if tags = @tags?.value?.escape

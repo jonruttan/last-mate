@@ -12,11 +12,13 @@ pathSplitRegex = new RegExp '[/.]'
 # a {RendererRegistry} by calling {RendererRegistry::loadRenderer}.
 module.exports =
 class TagStack
-  constructor: (@array=[], tag) ->
     @array = ({
       scope: scope
       tag: tag
     } for scope in @array) if tag
+  constructor: (options = {}, @array=[], tag) ->
+    {@translations} = options
+    @translations ?= {}
 
   # Public: Return the length of the scope array.
   #
@@ -37,6 +39,11 @@ class TagStack
       return '' if offset >= @array.length
       frame = Object.create @array[@array.length - 1 - offset]
       frame.scope = regexen.replaceAll(frame.scope, frame.tag.escape) if frame.tag.escape?
+      if frame.scope of @translations
+        frame.scope = @translations[frame.scope]
+      else if '.' of @translations
+        frame.scope = regexen.replaceAll frame.scope, @translations['.']
+
       frame.scope
 
   # Public: Push a scope {String} onto a scope array.

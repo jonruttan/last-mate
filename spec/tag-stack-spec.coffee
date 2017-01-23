@@ -7,19 +7,19 @@ describe "TagStack operations", ->
       expect(stack.array.length).toBe 0
 
     it "creates new objects with an initialized stack", ->
-      stack = new TagStack({scope: i} for i in [1, 2, 3])
+      stack = new TagStack(null, [{scope: 1}, {scope: 2}, {scope: 3}])
       expect(stack.array.length).toBe 3
       expect(stack.array[0].scope).toBe 1
       expect(stack.array[2].scope).toBe 3
 
     it "creates new objects with an initialized stack", ->
-      stack = new TagStack([1, 2, 3], true)
+      stack = new TagStack({}, [1, 2, 3], true)
       expect(stack.array.length).toBe 3
       expect(stack.array[0].scope).toBe 1
       expect(stack.array[2].scope).toBe 3
 
     it "creates new objects with an initialized stack", ->
-      stack = new TagStack([1, 2, 3], {close: 'close'})
+      stack = new TagStack({}, [1, 2, 3], {close: 'close'})
       expect(stack.array.length).toBe 3
       expect(stack.array[0].scope).toBe 1
       expect(stack.array[0].tag.close).toBe 'close'
@@ -116,17 +116,17 @@ describe "TagStack operations", ->
 
   describe "::sync(current, desired)", ->
     xit 'pops excess frames off of the stack', ->
-      stack = new TagStack([1,2,3])
+      stack = new TagStack({}, [1,2,3])
       expect(stack.array.length).toBe 3
-      stack.sync(new TagStack([1,2]))
+      stack.sync(new TagStack({}, [1,2]))
       expect(stack.array.length).toBe 2
       stack.sync(new TagStack())
       expect(stack.array.length).toBe 0
 
     it 'pops excess frames off of the stack', ->
-      stack = new TagStack({scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2, 3])
+      stack = new TagStack({}, {scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2, 3])
       expect(stack.array.length).toBe 3
-      tags = stack.sync(new TagStack({scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2]))
+      tags = stack.sync(new TagStack({}, {scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2]))
       expect(stack.array.length).toBe 2
       expect(tags).toBe '3'
       tags = stack.sync(new TagStack())
@@ -134,21 +134,21 @@ describe "TagStack operations", ->
       expect(tags).toBe '21'
 
     it 'replaces frames', ->
-      stack = new TagStack({scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2, 3])
+      stack = new TagStack({}, {scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2, 3])
       expect(stack.array.length).toBe 3
-      tags = stack.sync(new TagStack({scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2, 4]))
+      tags = stack.sync(new TagStack({}, {scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2, 4]))
       expect(stack.array.length).toBe 3
       expect(tags).toBe '3'
-      tags = stack.sync(new TagStack({scope: "#{i}", tag: {close: "\\0"}} for i in [2, 2, 4]))
+      tags = stack.sync(new TagStack({}, {scope: "#{i}", tag: {close: "\\0"}} for i in [2, 2, 4]))
       expect(stack.array.length).toBe 3
       expect(tags).toBe '421'
 
     it 'pushes new frames', ->
-      stack = new TagStack({scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2, 3])
+      stack = new TagStack({}, {scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2, 3])
       expect(stack.array.length).toBe 3
-      tags = stack.sync(new TagStack({scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2, 3, 4]))
+      tags = stack.sync(new TagStack({}, {scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2, 3, 4]))
       expect(stack.array.length).toBe 4
       expect(tags).toBe ''
-      tags = stack.sync(new TagStack({scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2, 4, 5, 6]))
+      tags = stack.sync(new TagStack({}, {scope: "#{i}", tag: {close: "\\0"}} for i in [1, 2, 4, 5, 6]))
       expect(stack.array.length).toBe 5
       expect(tags).toBe '43'
