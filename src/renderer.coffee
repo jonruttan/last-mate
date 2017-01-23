@@ -5,21 +5,10 @@ fs = require 'fs-plus'
 {Emitter} = require 'event-kit'
 Grim = require 'grim'
 
+regexen = require './regexen'
 TagStack = require './tag-stack'
 
 pathSplitRegex = new RegExp("[/.]")
-
-# Local: Apply an array of RegExp search/replace expressions on a string.
-#
-# * `string` {String} to transform.
-# * `regexen` {Array} of {Objects} containing a `pattern` to apply and a
-#   `replace` expression.
-#
-# Returns a {String} with the tranformations applied.
-replace = (string, regexen) ->
-  for regex in regexen
-    string = string.replace new RegExp(regex.pattern, 'g'), regex.replace
-  string
 
 # Extended: Renderer that converts tokenized lines of text to a markup format.
 #
@@ -113,7 +102,7 @@ class Renderer
   renderValue: (value, tagStack=new TagStack()) ->
     outputArray = []
     # value = ' ' unless value
-    value = replace value, tags if tags = @tags?.entities?.escape
+    value = regexen.replaceAll value, tags if tags = @tags?.value?.escape
     outputArray.push tagStack.push 'value', @tags?.value
     outputArray.push value
     outputArray.push tagStack.pop()

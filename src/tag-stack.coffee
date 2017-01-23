@@ -2,19 +2,9 @@ path = require 'path'
 
 _ = require 'underscore-plus'
 
-pathSplitRegex = new RegExp("[/.]")
+regexen = require './regexen'
 
-# Local: Apply an array of RegExp search/replace expressions on a string.
-#
-# * `string` {String} to transform.
-# * `regexen` {Array} of {Objects} containing a `pattern` to apply and a
-#   `replace` expression.
-#
-# Returns a {String} with the tranformations applied.
-replace = (string, regexen) ->
-  for regex in regexen
-    string = string.replace new RegExp(regex.pattern, 'g'), regex.replace
-  string
+pathSplitRegex = new RegExp '[/.]'
 
 # Extended: Renderer that converts tokenized lines of text to a markup format.
 #
@@ -46,7 +36,7 @@ class TagStack
     string.replace /\\(\d+)/g, (match, offset) =>
       return '' if offset >= @array.length
       frame = Object.create @array[@array.length - 1 - offset]
-      frame.scope = replace(frame.scope, frame.tag.escape) if frame.tag.escape?
+      frame.scope = regexen.replaceAll(frame.scope, frame.tag.escape) if frame.tag.escape?
       frame.scope
 
   # Public: Push a scope {String} onto a scope array.
