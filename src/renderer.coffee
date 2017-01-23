@@ -111,7 +111,7 @@ class Renderer
     # value = ' ' unless value
     value = regexen.replaceAll value, tags if tags = @tags?.value?.escape
     outputArray.push tagStack.push 'value', @tags?.value
-    outputArray.push value
+    outputArray.push tagStack.replaceBackReferences value
     outputArray.push tagStack.pop()
     outputArray.join ''
 

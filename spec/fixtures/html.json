@@ -29,9 +29,7 @@
     },
     "value": {
       "open": "<span>",
-      "close": "</span>"
-    },
-    "entities": {
+      "close": "</span>",
       "escape": [
         {
           "pattern": "&",
