@@ -19,10 +19,8 @@ class Renderer
   registration: null
 
   constructor: (@registry, options={}) ->
-    {@name, @fileTypes, @scopeName, @tags} = options
-
+    {@fileTypes, @name, @scopeName, @tab, @tags, @translations} = options
     @emitter = new Emitter
-
     @fileTypes ?= []
     @includedRendererScopes = []
 
@@ -33,7 +31,7 @@ class Renderer
   #
   # Returns a {TagStack} object.
   createTagStack: (array, tag) ->
-    new TagStack {@translations}, array, tag
+    new TagStack {@tab, @translations}, array, tag
 
   ###
   Section: Event Subscription

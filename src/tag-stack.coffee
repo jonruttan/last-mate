@@ -17,8 +17,8 @@ class TagStack
       tag: tag
     } for scope in @array) if tag
   constructor: (options = {}, @array=[], tag) ->
-    {@translations} = options
-    @translations ?= {}
+    {@counts, @tab, @translations} =ts ?= {}
+    @tab    @translations ?= {}
 
   # Public: Return the length of the scope array.
   #
@@ -29,17 +29,26 @@ class TagStack
   # Public: Replaces all instances of an escaped back-reference *(i.e. \0) with
   # the referenced tag's scope.
   #
-  # * `string` A {String} containing back-references.
+ope.
+  #
+  # **NOTE:** We're trying to keep the syntax the same as the *first-mate*
+  #           RegExp, so we use `\\0` rather than using `$&` for the insertion
+  #           of the matched substring, and `\\n` for the *nth* parenthesized
+  #           submatch str  # * `string` A {String} containing back-references.
   #
   # Returns a {String} with the back-referenced scopes.
   replaceBackReferences: (string) ->
-    # We're trying to keep the syntax the same as the *first-mate* RegExp,
-    # rather than using `$&` for the insertion.
-    string.replace /\\(\d+)/g, (match, offset) =>
+ring) ->
+    string = string
+      .replace /\\t/g, @tab
+      .replace /\\T/g, @tab.repeat @array.length
+      .replace /\\L/g, @arrape] or 0
+
+    return string if not @array    string.replace /\\(\d+)/g, (match, offset) =>
       return '' if offset >= @array.length
-      frame = Object.create @array[@array.length - 1 - offset]
+y      frame = Object.create @array[@array.length - 1 - offset]
       frame.scope = regexen.replaceAll(frame.scope, frame.tag.escape) if frame.tag.escape?
-      if frame.scope of @translations
+.      if frame.scope of @translations
         frame.scope = @translations[frame.scope]
       else if '.' of @translations
         frame.scope = regexen.replaceAll frame.scope, @translations['.']

@@ -25,6 +25,93 @@ describe "TagStack operations", ->
       expect(stack.array[0].tag.close).toBe 'close'
       expect(stack.array[2].scope).toBe 3
       expect(stack.array[2].tag.close).toBe 'close'
+    it "provides a default tab character", ->
+      stack = new TagStack()
+      expect(stack.tab).toBe '\t'
+
+    it "provides a default translations object", ->
+      stack = new TagStack()
+      expect(stack.translations).toEqual {}
+
+  describe "::replaceBackReferences: (string)", ->
+    it "returns the string with `\\t` replaced by the tab character", ->
+      stack = new TagStack()
+      string = stack.replaceBackReferences '\\t'
+      expect(string).toBe '\t'
+
+      stack = new TagStack()
+      stack.tab = '->'
+      string = stack.replaceBackReferences '\\t'
+      expect(string).toBe '->'
+
+    it "returns the string with `\\T` replaced by the tab character repeated by the stack length", ->
+      stack = new TagStack()
+      string = stack.replaceBackReferences '\\T'
+      expect(string).toBe ''
+
+      stack = new TagStack({}, ['one', 'two', 'three'], {})
+      string = stack.replaceBackReferences '\\T'
+      expect(string).toBe '\t\t\t'
+
+      stack = new TagStack()
+      stack.tab = '->'
+      string = stack.replaceBackReferences '\\T'
+      expect(string).toBe ''
+
+      stack = new TagStack({}, ['one', 'two', 'three'], {})
+      stack.tab = '->'
+      string = stack.replaceBackReferences '\\T'
+      expect(string).toBe '->->->'
+
+    it "returns the string with `\\L` replaced by the stack length", ->
+      stack = new TagStack()
+      string = stack.replaceBackReferences '\\L'
+      expect(string).toBe '0'
+
+      stack = new TagStack({}, ['one', 'two', 'three'], {})
+      string = stack.replaceBackReferences '\\L'
+      expect(string).toBe '3'
+
+    it "returns the string unchanged if the TagStack is empty", ->
+      stack = new TagStack()
+      string = stack.replaceBackReferences 'test'
+      expect(string).toBe 'test'
+
+    it "returns the string with back-references replaced", ->
+      stack = new TagStack({}, ['one', 'two', 'three'], {})
+      string = stack.replaceBackReferences '\\0'
+      expect(string).toBe 'three'
+      string = stack.replaceBackReferences '\\1'
+      expect(string).toBe 'two'
+      string = stack.replaceBackReferences '\\2'
+      expect(string).toBe 'one'
+      string = stack.replaceBackReferences '\\3'
+      expect(string).toBe ''
+
+    it "returns the string with escaped back-references replaced", ->
+      stack = new TagStack({}, ['one "two" three'],
+          {escape: [
+            {pattern: '"', replace: '\\\\0'}
+            {pattern: '^.*$', replace: '"\\0"'}
+          ]})
+      string = stack.replaceBackReferences '\\0'
+      expect(string).toBe '"one \\"two\\" three"'
+
+    it "returns the string with translated back-references replaced", ->
+      stack = new TagStack(translations: {
+        one: '1', two: '2', three: '3'
+      }, ['one', 'two', 'three'], {})
+      string = stack.replaceBackReferences '\\0'
+      expect(string).toBe '3'
+
+    it "returns the string with translated back-references replaced", ->
+      stack = new TagStack(translations: {
+        '.': [
+          {pattern: '^.*$', replace: '--\\0--'}
+        ]
+      }, ['one', 'two', 'three'], {})
+      string = stack.replaceBackReferences '\\0'
+      expect(string).toBe '--three--'
 
   describe "::push(scope)", ->
     it "pushes a scope on the stack", ->
