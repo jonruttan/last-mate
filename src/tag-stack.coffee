@@ -12,13 +12,18 @@ pathSplitRegex = new RegExp '[/.]'
 # a {RendererRegistry} by calling {RendererRegistry::loadRenderer}.
 module.exports =
 class TagStack
-    @array = ({
-      scope: scope
-      tag: tag
-    } for scope in @array) if tag
   constructor: (options = {}, @array=[], tag) ->
-    {@counts, @tab, @translations} =ts ?= {}
-    @tab    @translations ?= {}
+    {@counts, @tab, @translations} = options
+    @counts ?= {}
+    @tab ?= '\t'
+    @translations ?= {}
+
+    @array = ({scope, tag} for scope in @array) if tag
+
+    for frame in @array
+      @counts[frame.scope] ?= 0
+      @counts[frame.scope] += 1
+
 
   # Public: Return the length of the scope array.
   #
@@ -29,26 +34,30 @@ class TagStack
   # Public: Replaces all instances of an escaped back-reference *(i.e. \0) with
   # the referenced tag's scope.
   #
-ope.
-  #
   # **NOTE:** We're trying to keep the syntax the same as the *first-mate*
   #           RegExp, so we use `\\0` rather than using `$&` for the insertion
   #           of the matched substring, and `\\n` for the *nth* parenthesized
-  #           submatch str  # * `string` A {String} containing back-references.
+  #           submatch string.
+  #
+  # * `string` A {String} containing back-references.
   #
   # Returns a {String} with the back-referenced scopes.
   replaceBackReferences: (string) ->
-ring) ->
     string = string
       .replace /\\t/g, @tab
       .replace /\\T/g, @tab.repeat @array.length
-      .replace /\\L/g, @arrape] or 0
+      .replace /\\L/g, @array.length
+      .replace /\\N/g, @array.length and @counts[@array[@array.length - 1].scope] or 0
 
-    return string if not @array    string.replace /\\(\d+)/g, (match, offset) =>
+    return string if not @array.length
+
+    string.replace /\\(\d+)/g, (match, offset) =>
       return '' if offset >= @array.length
-y      frame = Object.create @array[@array.length - 1 - offset]
+
+      frame = Object.create @array[@array.length - 1 - offset]
       frame.scope = regexen.replaceAll(frame.scope, frame.tag.escape) if frame.tag.escape?
-.      if frame.scope of @translations
+
+      if frame.scope of @translations
         frame.scope = @translations[frame.scope]
       else if '.' of @translations
         frame.scope = regexen.replaceAll frame.scope, @translations['.']
@@ -62,6 +71,8 @@ y      frame = Object.create @array[@array.length - 1 - offset]
   #
   # Returns a {String} with an opening scope tag.
   push: (scope, tag={}) ->
+    @counts[scope] ?= 0
+    @counts[scope] += 1
     @array.push scope: scope, tag: tag
 
     return '' if not tag.open?

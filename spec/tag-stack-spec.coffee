@@ -11,12 +11,14 @@ describe "TagStack operations", ->
       expect(stack.array.length).toBe 3
       expect(stack.array[0].scope).toBe 1
       expect(stack.array[2].scope).toBe 3
+      expect(stack.counts).toEqual 1: 1, 2: 1, 3: 1
 
     it "creates new objects with an initialized stack", ->
       stack = new TagStack({}, [1, 2, 3], true)
       expect(stack.array.length).toBe 3
       expect(stack.array[0].scope).toBe 1
       expect(stack.array[2].scope).toBe 3
+      expect(stack.counts).toEqual 1: 1, 2: 1, 3: 1
 
     it "creates new objects with an initialized stack", ->
       stack = new TagStack({}, [1, 2, 3], {close: 'close'})
@@ -25,6 +27,12 @@ describe "TagStack operations", ->
       expect(stack.array[0].tag.close).toBe 'close'
       expect(stack.array[2].scope).toBe 3
       expect(stack.array[2].tag.close).toBe 'close'
+      expect(stack.counts).toEqual 1: 1, 2: 1, 3: 1
+
+    it "provides a default counts object", ->
+      stack = new TagStack()
+      expect(stack.counts).toEqual {}
+
     it "provides a default tab character", ->
       stack = new TagStack()
       expect(stack.tab).toBe '\t'
@@ -70,6 +78,19 @@ describe "TagStack operations", ->
 
       stack = new TagStack({}, ['one', 'two', 'three'], {})
       string = stack.replaceBackReferences '\\L'
+      expect(string).toBe '3'
+
+    it "returns the string with `\\N` replaced by the scope tally", ->
+      stack = new TagStack()
+      string = stack.replaceBackReferences '\\N'
+      expect(string).toBe '0'
+
+      stack = new TagStack({}, ['one', 'two', 'three'], {})
+      string = stack.replaceBackReferences '\\N'
+      expect(string).toBe '1'
+
+      stack = new TagStack({}, ['scope', 'scope', 'scope'], {})
+      string = stack.replaceBackReferences '\\N'
       expect(string).toBe '3'
 
     it "returns the string unchanged if the TagStack is empty", ->
