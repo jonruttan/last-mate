@@ -1,6 +1,3 @@
-path = require 'path'
-_ = require 'underscore-plus'
-fs = require 'fs-plus'
 TagStack = require '../lib/tag-stack'
 
 describe "TagStack operations", ->
