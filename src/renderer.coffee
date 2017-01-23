@@ -124,8 +124,8 @@ class Renderer
     @registration = null
 
   rendererUpdated: (scopeName) ->
-    return false unless _.include(@includedGrammarScopes, scopeName)
-    @registry.rendererUpdated(@scopeName)
+    return false unless _.include @includedGrammarScopes, scopeName
+    @registry.rendererUpdated @scopeName
     @emit 'renderer-updated' if Grim.includeDeprecatedAPIs
     @emitter.emit 'did-update'
     true
@@ -134,31 +134,31 @@ class Renderer
     if @registry.rendererOverrideForPath(filePath) is @scopeName
       2 + (filePath?.length ? 0)
     else
-      @getPathScore(filePath)
+      @getPathScore filePath
 
   getPathScore: (filePath) ->
     return -1 unless filePath
 
     filePath = filePath.replace(/\\/g, '/') if process.platform is 'win32'
 
-    pathComponents = filePath.toLowerCase().split(pathSplitRegex)
+    pathComponents = filePath.toLowerCase().split pathSplitRegex
     pathScore = -1
     for fileType in @fileTypes
-      fileTypeComponents = fileType.toLowerCase().split(pathSplitRegex)
+      fileTypeComponents = fileType.toLowerCase().split pathSplitRegex
       pathSuffix = pathComponents[-fileTypeComponents.length..-1]
-      if _.isEqual(pathSuffix, fileTypeComponents)
-        pathScore = Math.max(pathScore, fileType.length)
+      if _.isEqual pathSuffix, fileTypeComponents
+        pathScore = Math.max pathScore, fileType.length
 
     pathScore
 
 if Grim.includeDeprecatedAPIs
   EmitterMixin = require('emissary').Emitter
-  EmitterMixin.includeInto(Renderer)
+  EmitterMixin.includeInto Renderer
 
   Renderer::on = (eventName) ->
     if eventName is 'did-update'
-      Grim.deprecate("Call Renderer::onDidUpdate instead")
+      Grim.deprecate 'Call Renderer::onDidUpdate instead'
     else
-      Grim.deprecate("Call explicit event subscription methods instead")
+      Grim.deprecate 'Call explicit event subscription methods instead'
 
     EmitterMixin::on.apply(this, arguments)

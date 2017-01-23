@@ -69,19 +69,19 @@ class RendererRegistry
   # Returns a {Disposable} on which `.dispose()` can be called to remove the
   # renderer.
   addRenderer: (renderer) ->
-    @renderers.push(renderer)
+    @renderers.push renderer
     @renderersByScopeName[renderer.scopeName] = renderer
     @injectionRenderers.push(renderer) if renderer.injectionSelector?
     @rendererUpdated(renderer.scopeName)
     @emit 'renderer-added', renderer if Renderer.includeDeprecatedAPIs
     @emitter.emit 'did-add-renderer', renderer
-    new Disposable => @removeRenderer(renderer)
+    new Disposable => @removeRenderer renderer
 
   removeRenderer: (renderer) ->
-    _.remove(@renderers, renderer)
+    _.remove @renderers, renderer
     delete @renderersByScopeName[renderer.scopeName]
-    _.remove(@injectionRenderers, renderer)
-    @rendererUpdated(renderer.scopeName)
+    _.remove @injectionRenderers, renderer
+    @rendererUpdated renderer.scopeName
     undefined
 
   # Public: Remove the renderer with the given scope name.
@@ -90,7 +90,7 @@ class RendererRegistry
   #
   # Returns the removed {Renderer} or undefined.
   removeRendererForScopeName: (scopeName) ->
-    renderer = @rendererForScopeName(scopeName)
+    renderer = @rendererForScopeName scopeName
     @removeRenderer(renderer) if renderer?
     renderer
 
@@ -102,7 +102,7 @@ class RendererRegistry
   readRendererSync: (rendererPath) ->
     renderer = CSON.readFileSync(rendererPath) ? {}
     if typeof renderer.scopeName is 'string' and renderer.scopeName.length > 0
-      @createRenderer(rendererPath, renderer)
+      @createRenderer rendererPath, renderer
     else
       throw new Error("Renderer missing required scopeName property: #{rendererPath}")
 
@@ -132,8 +132,8 @@ class RendererRegistry
   #
   # Returns a {Renderer}.
   loadRendererSync: (rendererPath) ->
-    renderer = @readRendererSync(rendererPath)
-    @addRenderer(renderer)
+    renderer = @readRendererSync rendererPath
+    @addRenderer renderer
     renderer
 
   # Public: Read a renderer asynchronously and add it to the registry.
@@ -149,7 +149,7 @@ class RendererRegistry
       if error?
         callback?(error)
       else
-        @addRenderer(renderer)
+        @addRenderer renderer
         callback?(null, renderer)
 
     undefined
@@ -196,33 +196,33 @@ class RendererRegistry
   #
   # Returns a {Renderer}, never null.
   selectRenderer: (filePath) ->
-    _.max @renderers, (renderer) -> renderer.getScore(filePath)
+    _.max @renderers, (renderer) -> renderer.getScore filePath
 
   createToken: (value, scopes) -> {value, scopes}
 
   rendererUpdated: (scopeName) ->
     for renderer in @renderers when renderer.scopeName isnt scopeName
-      if renderer.rendererUpdated(scopeName)
+      if renderer.rendererUpdated scopeName
         @emit 'renderer-updated', renderer if Renderer.includeDeprecatedAPIs
         @emitter.emit 'did-update-renderer', renderer
     return
 
-  createRenderer: (rendererPath, object) ->
-    renderer = new Renderer(this, object)
+  createRenderer: (rendererPath, options) ->
+    renderer = new Renderer this, options
     renderer.path = rendererPath
     renderer
 
 if Grim.includeDeprecatedAPIs
   EmitterMixin = require('emissary').Emitter
-  EmitterMixin.includeInto(RendererRegistry)
+  EmitterMixin.includeInto RendererRegistry
 
   RendererRegistry::on = (eventName) ->
     switch eventName
       when 'renderer-added'
-        Grim.deprecate("Call RendererRegistry::onDidAddRenderer instead")
+        Grim.deprecate 'Call RendererRegistry::onDidAddRenderer instead'
       when 'renderer-updated'
-        Grim.deprecate("Call RendererRegistry::onDidUpdateRenderer instead")
+        Grim.deprecate 'Call RendererRegistry::onDidUpdateRenderer instead'
       else
-        Grim.deprecate("Call explicit event subscription methods instead")
+        Grim.deprecate 'Call explicit event subscription methods instead'
 
-    EmitterMixin::on.apply(this, arguments)
+    EmitterMixin::on.apply this, arguments
