@@ -1,5 +1,6 @@
-# Last Mate [![Build Status](https://travis-ci.org/jonruttan/last-mate.svg?branch=master)](https://travis-ci.org/jonruttan/last-mate)
+# Last Mate 
 
+[![Build Status](https://travis-ci.org/jonruttan/last-mate.svg?branch=master)](https://travis-ci.org/jonruttan/last-mate)
 [![Greenkeeper badge](https://badges.greenkeeper.io/jonruttan/last-mate.svg)](https://greenkeeper.io/)
 
 A rendering engine for tokens generated with TextMate-style grammars. Last Mate
